@@ -5,6 +5,7 @@ set(SOURCES "main")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS -O3 -Ofast -Wall)
 
 if("$ENV{BLAZE_DIR}" STREQUAL "")
   set(BLAZE_DIR "$ENV{HOME}/opt/blaze-3.2")
