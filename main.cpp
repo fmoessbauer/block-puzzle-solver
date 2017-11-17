@@ -234,7 +234,7 @@ std::vector<int> cube_of_indices(
     const auto & s = all_masks[path[x]-1];
     for(unsigned int i=0; i<size; ++i){
       if(s.test(i)){
-        cube[i] = x;
+        cube[i] = x+1;
       }
     }
   }
