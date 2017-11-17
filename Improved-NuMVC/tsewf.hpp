@@ -7,8 +7,8 @@
 ** Date:	2011.7.1
 ** TSEWF (Two Stage Exchange and Weighting with Forgetting)
 ** Author: Shaowei Cai, shaowei_cai@126.com
-**		   School of EECS, Peking University
-**		   Beijing, China
+**       School of EECS, Peking University
+**       Beijing, China
 **
 ** Date:	2011.10.28
 ** Modify: Shaowei Cai
@@ -25,6 +25,7 @@
 #include <chrono>
 #include <vector>
 #include <iostream>
+#include <iomanip>
 
 namespace chrono  = std::chrono;
 
@@ -33,6 +34,8 @@ private:
   using timepoint_t = chrono::time_point<
                         chrono::system_clock>;
 private:
+
+  bool verbose = false;
 
   timepoint_t start, finish;
   timepoint_t start_time;
@@ -108,11 +111,13 @@ private:
 
 public:
   template<typename Is>
-  explicit TSEWF(
+  TSEWF(
       Is & str,
       int optimal_size,
-      int cutoff_time)
-  : optimal_size(optimal_size),
+      int cutoff_time,
+      bool verbose = false)
+  : verbose(verbose),
+    optimal_size(optimal_size),
     cutoff_time(cutoff_time)
   {
     build_instance(str);
@@ -364,7 +369,9 @@ private:
       }
     }
 
-    printf("Initial cover size: %d\n",i);
+    if(verbose){
+      std::cout << "Initial cover size: " << i << std::endl;
+    }
 
     c_size = i;
 
@@ -531,7 +538,11 @@ public:
       {
         update_best_sol();      // C* := C
 
-        printf("Better MVC found.\tSize: %d\tTime: %.3f\n", v_num-best_c_size,best_comp_time);
+        if(verbose){
+          std::cout << "Better MVC found.\tSize: " << v_num-best_c_size
+                    << "\tTime: " << std::fixed << std::setw(4) << std::setprecision(4)
+                    << best_comp_time << "s" << std::endl;
+        }
 
         if (c_size==optimal_size)
           return;
@@ -548,7 +559,6 @@ public:
         finish = chrono::system_clock::now();
         auto elapsed_ms  = chrono::duration_cast<chrono::milliseconds>(finish - start_time);
         double elap_time = static_cast<double>(elapsed_ms.count()) / 1000;
-        //printf("Best MVC size: %d\tTime: %.3f\n",best_c_size,elap_time);
         if(elap_time >= cutoff_time) return;
       }
 
@@ -628,9 +638,10 @@ public:
         mis_vertex_count++;
     }
 
-    if(mis_vertex_count+best_c_size!=v_num)
+    if(mis_vertex_count+best_c_size!=v_num){
       std::cout << "The size of independent set + the size of "
                 << "vertex cover is not equal to |V(G)|!" << std::endl;
+    }
 
     std::cout << "c Best found independent set size = "
               << mis_vertex_count << std::endl;
