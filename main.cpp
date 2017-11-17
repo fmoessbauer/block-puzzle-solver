@@ -23,6 +23,7 @@
 #include "Improved-NuMVC/tsewf.hpp"
 
 //#define PROBLEM_DEMO
+// Use a tiny problem for testing
 
 #ifdef PROBLEM_DEMO
 constexpr int num_stones = 4;
@@ -161,7 +162,7 @@ bitset_vec_t filter_bitmasks(const bitset_vec_t & bitsets){
   // nice side effect: bitmasks are sorted
   std::vector<bitset_t> result;
   result.reserve(std::distance(bitmasks.begin(), endit));
-  std::for_each(bitmasks.begin(), endit, 
+  std::for_each(bitmasks.begin(), endit,
       [&result, &bitsets](const auto & e){
         result.push_back(bitsets[e.first]);
       });
@@ -174,7 +175,7 @@ bitset_vec_t filter_bitmasks(const bitset_vec_t & bitsets){
 graph_t generate_collision_graph(const bitset_vec_t & bitsets){
   const auto num_masks = bitsets.size();
   graph_t graph(num_masks);
- 
+
   // generate vertices
    for(int i=0; i<num_masks; ++i){
     for(int j=(i+1); j<num_masks; ++j){
@@ -233,7 +234,7 @@ std::vector<int> cube_of_indices(
     const auto & s = all_masks[path[x]-1];
     for(unsigned int i=0; i<size; ++i){
       if(s.test(i)){
-        cube[i] = x; 
+        cube[i] = x;
       }
     }
   }
@@ -250,17 +251,17 @@ void print_cube_slices(
   const int splits_layer = std::get<0>(cube_ext) * std::get<1>(cube_ext);
   const std::string delim(splits_row*3-1, '=');
 
-  std::cout << delim << std::endl;
   for(unsigned int i=0; i<cube.size(); ++i){
+    if(i % splits_layer == 0){
+      std::cout << delim << " Layer " << (i/splits_layer+1) << std::endl;
+    }
     std::cout << std::setw(2)
               << cube[i] << " ";
     if(i % splits_row == (splits_row-1)){
       std::cout << std::endl;
     }
-    if(i % splits_layer == (splits_layer-1)){
-      std::cout << delim << std::endl;
-    }
   }
+  std::cout << delim << std::endl;
 }
 
 
@@ -302,7 +303,7 @@ int main(int argc, char** argv){
   std::transform(all_pos_blocks.begin(), all_pos_blocks.end(),
                  std::back_inserter(all_pos_masks), block_to_bitmask);
 
-  
+
   std::cout << "Position bitmasks: " << all_pos_masks.size() << std::endl;
   auto unique_pos_masks = std::move(filter_bitmasks(all_pos_masks));
   std::cout << "Position bitmasks (unique): " << unique_pos_masks.size() << std::endl;
@@ -315,16 +316,18 @@ int main(int argc, char** argv){
   // or pipe directly into solver
   std::stringstream os;
   write_dimacs(col_graph, os);
-  
+
   // initialize solver and solve
-  TSEWF solver(os, boost::num_vertices(col_graph)-num_stones, 1000);
+  std::cout << "\n=== Start NuMVC solver ===" << std::endl;
+  TSEWF solver(os, boost::num_vertices(col_graph)-num_stones, 1000, true);
   solver.cover_LS();
   auto solution = std::move(solver.get_independent_set());
   // print solution
+  std::cout << "Proposed solution: ";
   for(const int e : solution){
     std::cout << (e-1) << " ";
   }
-  std::cout << std::endl;
+  std::cout << "\n" << std::endl;
 
   // check if solution is valid
   if(solver.check_solution() && solution.size() == num_stones){
@@ -336,6 +339,6 @@ int main(int argc, char** argv){
     std::cout << "Found NO solution: " << std::endl;
   }
 
-  return 0;  
+  return 0;
 }
 
