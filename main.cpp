@@ -22,20 +22,20 @@
 
 #include "Improved-NuMVC/tsewf.hpp"
 
+// if enabled, use a tiny problem for testing
 //#define PROBLEM_DEMO
-// Use a tiny problem for testing
 
 #ifdef PROBLEM_DEMO
-constexpr int num_stones = 4;
+constexpr int num_bricks = 4;
 constexpr std::array<size_t, 3> cube_ext{{3UL,2UL,2UL}};
-using stone_l  = std::integral_constant<size_t, 3UL>;
+using brick_l  = std::integral_constant<size_t, 3UL>;
 #else
-constexpr int num_stones = 25;
+constexpr int num_bricks = 25;
 constexpr std::array<size_t, 3> cube_ext{{5UL,5UL,5UL}};
-using stone_l  = std::integral_constant<size_t, 5UL>;
+using brick_l  = std::integral_constant<size_t, 5UL>;
 #endif
 
-using mask_t   = blaze::StaticMatrix<int, 3UL, stone_l::value>;
+using mask_t   = blaze::StaticMatrix<int, 3UL, brick_l::value>;
 using offset_t = blaze::StaticMatrix<int, 3UL, 1UL>;
 using rot_t    = blaze::StaticMatrix<int, 3UL, 3UL>;
 using bitset_t = std::bitset<std::get<0>(cube_ext) *
@@ -44,29 +44,33 @@ using bitset_t = std::bitset<std::get<0>(cube_ext) *
 
 using coord_vec_t  = std::vector<mask_t>;
 using bitset_vec_t = std::vector<bitset_t>;
-using graph_t  = boost::adjacency_matrix<
-                  boost::undirectedS,
-                  boost::property<boost::vertex_index_t, int>,
-                  boost::no_property>;
+using graph_t      = boost::adjacency_matrix<
+                       boost::undirectedS,
+                       boost::property<boost::vertex_index_t, int>,
+                       boost::no_property>;
 
+// rotation matrices
 const rot_t rot_x{{1,0,0}, {0,0,-1},{0,1,0}};
 const rot_t rot_y{{0,0,1}, {0,1,0}, {-1,0,0}};
 const rot_t rot_z{{0,-1,0},{1,0,0}, {0,0,1}};
 
 #ifdef PROBLEM_DEMO
-const mask_t stone{{0,0,1},
+const mask_t brick{{0,0,1},
                    {1,0,0},
                    {0,0,0}};
 #else
-const mask_t stone{{ 0, 0, 1,-1,-2},
+const mask_t brick{{ 0, 0, 1,-1,-2},
                    { 1, 0, 0, 0, 0},
                    { 0, 0, 0, 0, 0}};
 #endif
 
 inline bool valid_combination(bitset_t, bitset_t);
 
+/**
+ * shift brick according to offset
+ */
 mask_t move(mask_t matrix, offset_t offset){
-  using ones_t = blaze::StaticMatrix<int, 1UL, stone_l::value>;
+  using ones_t = blaze::StaticMatrix<int, 1UL, brick_l::value>;
   ones_t ones(1);
   return matrix + (offset * ones);
 }
@@ -77,6 +81,9 @@ inline offset_t one_hot(size_t pos){
   return mat;
 }
 
+/**
+ * minimum maximum offset in given dimension.
+ */
 inline std::pair<int, int> minmax_dim(const mask_t & matrix, size_t dim){
   auto row = blaze::row(matrix, dim);
   auto max = blaze::max(row);
@@ -85,9 +92,9 @@ inline std::pair<int, int> minmax_dim(const mask_t & matrix, size_t dim){
 }
 
 /**
- * Shift stone to avoid negative coordinates
+ * Shift brick to avoid negative coordinates
  */
-mask_t stone_to_block(mask_t matrix){
+mask_t brick_to_block(mask_t matrix){
   for(size_t i = 0; i<matrix.rows(); ++i){
     auto min = minmax_dim(matrix, i).first;
     matrix = move(matrix, one_hot(i) * (-min));
@@ -98,7 +105,7 @@ mask_t stone_to_block(mask_t matrix){
 /**
  * Generate all permuations of a block in coord format
  */
-coord_vec_t generate_block_permutations(const mask_t & stone){
+coord_vec_t generate_block_permutations(const mask_t & brick){
   std::vector<mask_t> blocks;
   blaze::IdentityMatrix<int> eye(3UL);
   rot_t rx = eye;
@@ -111,8 +118,8 @@ coord_vec_t generate_block_permutations(const mask_t & stone){
       for(int k=0; k<4; k+=2){
         rz = rz*rot_z;
         if(j==k){continue;} // already calculated
-        auto rot_stone = rx*ry*rz*stone;
-        blocks.push_back(stone_to_block(rot_stone));
+        auto rot_brick = rx*ry*rz*brick;
+        blocks.push_back(brick_to_block(rot_brick));
       }
     }
   }
@@ -221,7 +228,7 @@ inline bool valid_combination(bitset_t a, bitset_t b){
 /**
  * Converts solution given as a path with indices shifted by one
  * to a cube of indices where each position in the cube is
- * marked with the path-index of the covering stone.
+ * marked with the path-index of the covering brick.
  */
 std::vector<int> cube_of_indices(
     const std::vector<int> & path,
@@ -267,7 +274,7 @@ void print_cube_slices(
 
 int main(int argc, char** argv){
   // generate all permutations block
-  auto blocks = std::move(generate_block_permutations(stone));
+  auto blocks = std::move(generate_block_permutations(brick));
   std::cout << "Stone permutations: " << blocks.size() << std::endl;
 
   // convert permutations to bitmasks
@@ -319,7 +326,7 @@ int main(int argc, char** argv){
 
   // initialize solver and solve
   std::cout << "\n=== Start NuMVC solver ===" << std::endl;
-  TSEWF solver(os, boost::num_vertices(col_graph)-num_stones, 1000, true);
+  TSEWF solver(os, boost::num_vertices(col_graph)-num_bricks, 1000, true);
   solver.cover_LS();
   auto solution = std::move(solver.get_independent_set());
   // print solution
@@ -330,7 +337,7 @@ int main(int argc, char** argv){
   std::cout << "\n" << std::endl;
 
   // check if solution is valid
-  if(solver.check_solution() && solution.size() == num_stones){
+  if(solver.check_solution() && solution.size() == num_bricks){
     std::cout << "Found solution: " << std::endl;
     // convert solution for pretty printing
     auto solved_cube = cube_of_indices(solution, unique_pos_masks);
