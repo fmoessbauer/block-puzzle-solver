@@ -25,6 +25,9 @@
 // if enabled, use a tiny problem for testing
 //#define PROBLEM_DEMO
 
+// export cube as point cloud
+#define CSV_OUTPUT
+
 #ifdef PROBLEM_DEMO
 constexpr int num_bricks = 4;
 constexpr std::array<size_t, 3> cube_ext{{3UL,2UL,2UL}};
@@ -198,7 +201,8 @@ graph_t generate_collision_graph(const bitset_vec_t & bitsets){
 /**
  * export boost graph to dimacs graph format
  */
-void write_dimacs(const graph_t & graph, std::ostream & out){
+template<typename OutputStream>
+void write_dimacs(const graph_t & graph, OutputStream & out){
   auto num_edges    = boost::num_edges(graph);
   auto num_vertices = boost::num_vertices(graph);
   boost::graph_traits<graph_t>::edge_iterator ei, ei_end;
@@ -210,6 +214,24 @@ void write_dimacs(const graph_t & graph, std::ostream & out){
     auto sidx   = boost::get(boost::vertex_index, graph, source);
     auto tidx   = boost::get(boost::vertex_index, graph, target);
     out << "e " << sidx+1 << " " << tidx+1 << std::endl;
+  }
+}
+
+template<typename OutputStream>
+void write_csv_point_cloud(
+    const std::vector<int> & cube,
+    OutputStream & out)
+{
+  const int splits_row   = std::get<0>(cube_ext);
+  const int splits_col   = std::get<1>(cube_ext);
+  const int splits_layer = std::get<0>(cube_ext) * std::get<1>(cube_ext);
+
+  out << "x,y,z,v" << std::endl;
+  for(unsigned int i=0; i<cube.size(); ++i){
+    int x = i % splits_row;
+    int y = (i/splits_row) % splits_col;
+    int z = i/splits_layer;
+    out << x << "," << y << "," << z << "," << cube[i] << std::endl;
   }
 }
 
@@ -251,8 +273,10 @@ std::vector<int> cube_of_indices(
 /**
  * Pretty print cube by printing it in layers
  */
-void print_cube_slices(
-    const std::vector<int> & cube)
+template<typename OutputStream>
+void write_cube_slices(
+    const std::vector<int> & cube,
+    OutputStream & out)
 {
   const int splits_row   = std::get<0>(cube_ext);
   const int splits_layer = std::get<0>(cube_ext) * std::get<1>(cube_ext);
@@ -260,15 +284,15 @@ void print_cube_slices(
 
   for(unsigned int i=0; i<cube.size(); ++i){
     if(i % splits_layer == 0){
-      std::cout << delim << " Layer " << (i/splits_layer+1) << std::endl;
+      out << delim << " Layer " << (i/splits_layer+1) << std::endl;
     }
-    std::cout << std::setw(2)
-              << cube[i] << " ";
+    out << std::setw(2)
+         << cube[i] << " ";
     if(i % splits_row == (splits_row-1)){
-      std::cout << std::endl;
+      out << std::endl;
     }
   }
-  std::cout << delim << std::endl;
+  out << delim << std::endl;
 }
 
 
@@ -341,7 +365,12 @@ int main(int argc, char** argv){
     std::cout << "Found solution: " << std::endl;
     // convert solution for pretty printing
     auto solved_cube = cube_of_indices(solution, unique_pos_masks);
-    print_cube_slices(solved_cube);
+    write_cube_slices(solved_cube, std::cout);
+#ifdef CSV_OUTPUT
+    std::fstream os("solution.csv", std::ios::out);
+    write_csv_point_cloud(solved_cube, os);
+    os.close();
+#endif
   } else {
     std::cout << "Found NO solution: " << std::endl;
   }
