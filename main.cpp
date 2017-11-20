@@ -217,6 +217,9 @@ void write_dimacs(const graph_t & graph, OutputStream & out){
   }
 }
 
+/**
+ * export solution as point-cloud in csv format
+ */
 template<typename OutputStream>
 void write_csv_point_cloud(
     const std::vector<int> & cube,
@@ -240,7 +243,7 @@ void write_csv_point_cloud(
  * That means, no two ones are added
  */
 inline bool valid_combination(bitset_t a, bitset_t b){
-// faster that -(a n b)
+  // faster that -(a n b)
   a.flip();
   b.flip();
   a|=b;

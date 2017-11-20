@@ -26,10 +26,11 @@ if( blaze_FOUND )
   target_link_libraries(blaze INTERFACE blaze::blaze)
 endif()
 
-find_package( Boost REQUIRED COMPONENTS graph)                               
+find_package( Boost REQUIRED COMPONENTS graph)
 if( Boost_FOUND )
   add_library(Boost INTERFACE)
   target_link_libraries(Boost INTERFACE Boost::graph)
 endif()
 
 target_link_libraries(${PROJECT_NAME} blaze Boost)
+
