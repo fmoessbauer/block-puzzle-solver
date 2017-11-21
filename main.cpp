@@ -243,11 +243,8 @@ void write_csv_point_cloud(
  * That means, no two ones are added
  */
 inline bool valid_combination(bitset_t a, bitset_t b){
-  // faster that -(a n b)
-  a.flip();
-  b.flip();
-  a|=b;
-  return a.all();
+  a&=b;
+  return a.none();
 }
 
 /**
