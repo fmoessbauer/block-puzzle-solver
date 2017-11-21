@@ -1,5 +1,11 @@
 # Block Puzzle Solver
 
+This program solves the 5x5x5 brick-cube-puzzle in less than one second using a sophisticated algorithmic approach.
+The implementation is both highly efficient as well as easy to understand and is suited for educational purposes.
+
+While this implementation currently only solves the provided puzzle it can easily be extended to solve any space-filling problem
+using blocks of arbitrary shapes (even multiple different shapes).
+
 ## Compiling
 
 This program depends on [Blaze](https://bitbucket.org/blaze-lib/blaze) and the [Boost Graph Library](http://www.boost.org/doc/libs/1_65_1/libs/graph/doc/index.html). For compiling we recommend using cmake:
@@ -78,7 +84,7 @@ bool valid_combination(bitmask a, bitmask b){
 Now, the goal is to find 25 bitmasks out of all candidates which do not collide.
 Mathematically spoken this 25 bitmasks must not collide pair-wise.
 As the number of combinations (25 out of ~ 960) is roughly 3e74 exhaustive search is not possible.
-This also applies to backtracking as shown below.
+This also applies to backtracking approach as shown below.
 
 Hence, we rely on a different approach: We calculate the collision graph of all bitmasks by checking each pair of masks:
 If the masks collide, an edge is added between both vertices (indices of bitmask).
@@ -88,10 +94,13 @@ As the collision function is symmetric, the graph is undirected and has no refle
 **Example**
 
 ```
-0 | 0 1 0 0
-1 | 1 1 0 0
-2 | 0 0 1 0
-3 | 0 1 1 1
+Bitmasks                  0 1 2 3
+                         ---------
+0 | 0 1 0 0 1  Graph  0 | - - - - |
+1 | 1 1 0 0 0  ====>  1 | x - - - |
+2 | 0 0 1 0 0         2 |     - - |
+3 | 0 1 1 1 0         3 | x x   - |
+                         ---------
 ```
 
 The collision graph (in edge-list-format) of the example is then: `{(0,1),(0,3),(2,3)}`.
@@ -125,9 +134,9 @@ This representation can easily be read by humans.
 
 Other approaches for solving the problem have been considered:
 
-**Backtracking**
+### Backtracking
 
-Idea: Add bricks to the cube as long as possible:
+**Idea**: Add bricks to the cube as long as possible:
 
 Bricks which do not collide with the partial solution are added to the cube (by adding the bitmasks).
 If no further non-colliding brick can be added and not all bits of the cube are set, backtrack.
