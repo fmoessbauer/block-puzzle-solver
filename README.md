@@ -1,10 +1,15 @@
 # Block Puzzle Solver
 
 This program solves the 5x5x5 brick-cube-puzzle in less than one second using a sophisticated algorithmic approach.
-The implementation is both highly efficient as well as easy to understand and is suited for educational purposes.
+The implementation is both highly efficient as well as easy to understand.
+The presented techniques are suited for many optimization problems and also can be used for educational purposes.
 
 While this implementation currently only solves the provided puzzle it can easily be extended to solve any space-filling problem
 using blocks of arbitrary shapes (even multiple different shapes).
+
+![Wooden Block Puzzle](https://gist.githubusercontent.com/fmoessbauer/ed15ccb82cf2c4626fdbd17de7145506/raw/29f6d2a8fa59593d60f674093203e0028385af7f/cube_puzzle_small.jpg)
+
+*Real-world wooden block puzzle. All bricks are of equal shape.*
 
 ## Compiling
 
@@ -39,7 +44,7 @@ This transformes the 3D problem-space into a 1D memory block, where the problem 
 ### Generate Permutations
 
 At first all permutations of all (unique) bricks have to be calculated. In our case we have just one brick.
-For easier calculations the stored as a $3 x m$ matrix where each block of the brick is represented as coordinate vector.
+For easier calculations the brick is stored as a $3 x m$ matrix where each block of the brick is represented as coordinate vector.
 Often this format is also called point-cloud.
 The matrix for the brick shown above is then given as (column vectors can be swapped):
 
@@ -51,12 +56,11 @@ The matrix for the brick shown above is then given as (column vectors can be swa
 
 **Rotation**
 
-To get all permutations of the brick, it has to be rotated about every axis.
+To get all orientations of the brick, it has to be rotated about every axis.
 This is done by multiplying the brick-matrix with [rotation matrices](https://en.wikipedia.org/wiki/Rotation_matrix).
 As the brick might be symmetric with respect to an axis or a point, this rotation process might return duplicates.
 These would only differ in an offset. To avoid this, the resulting bricks are shifted so that the smalles coordinate
 in each axis is 0. After that duplicates are removed.
-
 
 **Translation**
 
@@ -70,7 +74,7 @@ The coordinate format makes calculation of the rotations and transformations eas
 
 ### Calculate Collision Graph
 
-Using the bitmask format, collision detection becomes trivial. To check if two bitmasks are collision-free (no two true-bits collide), the following function can be use:
+Using the bitmask format, collision detection becomes trivial. To check if two bitmasks are collision-free (no two true-bits collide), the following function can be used:
 
 ```cpp
 bool valid_combination(bitmask a, bitmask b){
@@ -89,9 +93,12 @@ This also applies to backtracking approach as shown below.
 Hence, we rely on a different approach: We calculate the collision graph of all bitmasks by checking each pair of masks:
 If the masks collide, an edge is added between both vertices (indices of bitmask).
 This results in a graph with one vertex per mask and edges between every two vertices where the corresponding bitmasks collide.
-As the collision function is symmetric, the graph is undirected and has no reflexive edges.
+As the collision function is symmetric, the graph is undirected.
+Theoretically there would be an reflexiv edge for each vertex, but we do not store them as each vertex must occur at most once.
 
 **Example**
+
+As the graph is dense (it has many more edges than vertices) we store it as [adjaceny matrix](https://en.wikipedia.org/wiki/Adjacency_matrix).
 
 ```
 Bitmasks                  0 1 2 3
@@ -99,7 +106,7 @@ Bitmasks                  0 1 2 3
 0 | 0 1 0 0 1  Graph  0 | - - - - |
 1 | 1 1 0 0 0  ====>  1 | x - - - |
 2 | 0 0 1 0 0         2 |     - - |
-3 | 0 1 1 1 0         3 | x x   - |
+3 | 0 1 1 1 0         3 | x   x - |
                          ---------
 ```
 
