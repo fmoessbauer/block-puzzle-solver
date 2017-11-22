@@ -3,6 +3,7 @@
 This program solves the 5x5x5 brick-cube-puzzle in less than one second using a sophisticated algorithmic approach.
 The implementation is both highly efficient as well as easy to understand.
 The presented techniques are suited for many optimization problems and also can be used for educational purposes.
+Compared to traditional strategies like backtracking, this approach is more than two magnitudes faster.
 
 While this implementation currently only solves the provided puzzle it can easily be extended to solve any space filling problem
 using blocks of arbitrary shapes.
