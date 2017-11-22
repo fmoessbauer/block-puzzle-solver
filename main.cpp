@@ -22,8 +22,10 @@
 
 #include "Improved-NuMVC/tsewf.hpp"
 
-// if enabled, use a tiny problem for testing
+// specify which problem should be solved 
 //#define PROBLEM_DEMO
+//#define PROBLEM_555
+//#define PROBLEM_666
 
 // export cube as point cloud
 #define CSV_OUTPUT
@@ -32,6 +34,10 @@
 constexpr int num_bricks = 4;
 constexpr std::array<size_t, 3> cube_ext{{3UL,2UL,2UL}};
 using brick_l  = std::integral_constant<size_t, 3UL>;
+#elif PROBLEM_666
+constexpr int num_bricks = 54;
+constexpr std::array<size_t, 3> cube_ext{{6UL,6UL,6UL}};
+using brick_l  = std::integral_constant<size_t, 4UL>;
 #else
 constexpr int num_bricks = 25;
 constexpr std::array<size_t, 3> cube_ext{{5UL,5UL,5UL}};
@@ -61,6 +67,10 @@ const rot_t rot_z{{0,-1,0},{1,0,0}, {0,0,1}};
 const mask_t brick{{0,0,1},
                    {1,0,0},
                    {0,0,0}};
+#elif PROBLEM_666
+const mask_t brick{{ 0, 0, 1,-1},
+                   { 1, 0, 0, 0},
+                   { 0, 0, 0, 0}};
 #else
 const mask_t brick{{ 0, 0, 1,-1,-2},
                    { 1, 0, 0, 0, 0},
@@ -118,9 +128,8 @@ coord_vec_t generate_block_permutations(const mask_t & brick){
     for(int j=0; j<4; ++j){
       ry = ry*rot_y;
       rot_t rz = eye;
-      for(int k=0; k<4; k+=2){
+      for(int k=0; k<4; ++k){
         rz = rz*rot_z;
-        if(j==k){continue;} // already calculated
         auto rot_brick = rx*ry*rz*brick;
         blocks.push_back(brick_to_block(rot_brick));
       }
@@ -187,8 +196,8 @@ graph_t generate_collision_graph(const bitset_vec_t & bitsets){
   graph_t graph(num_masks);
 
   // generate vertices
-   for(int i=0; i<num_masks; ++i){
-    for(int j=(i+1); j<num_masks; ++j){
+   for(unsigned int i=0; i<num_masks; ++i){
+    for(unsigned int j=(i+1); j<num_masks; ++j){
       // no collision
       if(!valid_combination(bitsets[i], bitsets[j])){
         boost::add_edge(i,j, graph);
@@ -350,7 +359,7 @@ int main(int argc, char** argv){
 
   // initialize solver and solve
   std::cout << "\n=== Start NuMVC solver ===" << std::endl;
-  TSEWF solver(os, boost::num_vertices(col_graph)-num_bricks, 1000, true);
+  TSEWF solver(os, boost::num_vertices(col_graph)-num_bricks, 100, true);
   solver.cover_LS();
   auto solution = std::move(solver.get_independent_set());
   // print solution

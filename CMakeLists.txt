@@ -3,15 +3,19 @@ cmake_minimum_required(VERSION 3.2)
 project(blocks-puzzle)
 set(SOURCES "main")
 
-set(RELEASE_COMPILE_FLAGS -O3 -Ofast -Wall)
-set(DEBUG_COMPILE_FLAGS -g -Wall -Werr) 
+if(NOT "${TASK}" STREQUAL "")
+  set(TASK_FLAG "-D${TASK} ")
+endif()
+
+set(RELEASE_COMPILE_FLAGS "-O3 -Ofast -Wall")
+set(DEBUG_COMPILE_FLAGS "-g -Wall -Werr") 
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS ${DEBUG_COMPILE_FLAGS})
+  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${TASK_FLAG} ${DEBUG_COMPILE_FLAGS}")
 else()
-  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS ${RELEASE_COMPILE_FLAGS})
+  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${TASK_FLAG} ${RELEASE_COMPILE_FLAGS}")
 endif()
 
 if("$ENV{BLAZE_DIR}" STREQUAL "")

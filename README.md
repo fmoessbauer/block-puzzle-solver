@@ -18,7 +18,12 @@ This program depends on [Blaze](https://bitbucket.org/blaze-lib/blaze) and the [
 ```bash
 export Blaze_DIR="/path/to/blaze"
 export Boost_DIR="/path/to/boost"
+# for 5x5x5 problem
 cmake .
+# for 6x6x6 problem
+cmake -DTASK=PROBLEM_666 .
+# compile
+make
 ```
 
 ## Running
