@@ -136,7 +136,7 @@ Depending on how the solution should be presented, it is converted to different 
 A 125 element point cloud where each point is colored according to the index of the brick that occupies this grid cell.
 This format is useful to visualise the solution using the python script or other visualisation tools.
 
-![Sample Solution](https://gist.githubusercontent.com/fmoessbauer/ed15ccb82cf2c4626fdbd17de7145506/raw/48980717cfb6591b1c1aa13b5c5c31bd972c565b/solution_layers.png)
+![Sample Solution](https://gist.githubusercontent.com/fmoessbauer/ed15ccb82cf2c4626fdbd17de7145506/raw/f262253f348004b5139e97a2d1bcd29b55bd3b07/solution_layers.png)
 
 *Visualization of a solution, using the python script. CSV file is available in the folder `data`.*
 

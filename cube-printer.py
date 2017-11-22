@@ -29,7 +29,7 @@ def print_cube(filename):
     #text portion
     x, y = np.meshgrid(np.arange(0,maxval.x+1), np.arange(0,maxval.y+1))
     for x_val, y_val in zip(x.flatten(), y.flatten()):
-      ax[z].text(x_val, y_val, chr(65+layer[y_val,x_val]), va='center', ha='center')
+      ax[z].text(x_val, y_val, chr(64+layer[y_val,x_val]), va='center', ha='center')
 
     ax[z].set_title("Layer {}".format(z))
   img_file="solution_layers.png";
