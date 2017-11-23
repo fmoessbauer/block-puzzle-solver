@@ -5,8 +5,7 @@ The implementation is both highly efficient as well as easy to understand.
 The presented techniques are suited for many optimization problems and also can be used for educational purposes.
 Compared to traditional strategies like backtracking, this approach is more than two magnitudes faster.
 
-While this implementation currently only solves the provided puzzle it can easily be extended to solve any space filling problem
-using blocks of arbitrary shapes.
+While this implementation currently only solves the provided puzzle as well as the "T-Cube" (6x6x6) it can easily be extended to solve any space filling problem using blocks of arbitrary shapes.
 
 ![Wooden Block Puzzle](https://gist.githubusercontent.com/fmoessbauer/ed15ccb82cf2c4626fdbd17de7145506/raw/29f6d2a8fa59593d60f674093203e0028385af7f/cube_puzzle_small.jpg)
 
@@ -21,7 +20,7 @@ export Blaze_DIR="/path/to/blaze"
 export Boost_DIR="/path/to/boost"
 # for 5x5x5 problem
 cmake .
-# for 6x6x6 problem
+# for 6x6x6 problem ("T-Cube")
 cmake -DTASK=PROBLEM_666 .
 # compile
 make
