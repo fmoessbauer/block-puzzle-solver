@@ -33,7 +33,10 @@ endif()
 find_package( Boost REQUIRED COMPONENTS graph)
 if( Boost_FOUND )
   add_library(Boost INTERFACE)
-  target_link_libraries(Boost INTERFACE Boost::graph)
+  # often not working if cmake or boost is too old
+  #  target_link_libraries(Boost INTERFACE Boost::graph)
+  include_directories(${Boost_INCLUDE_DIR})
+  target_link_libraries(Boost ${Boost_LIBRARY_DIR})
 endif()
 
 target_link_libraries(${PROJECT_NAME} blaze Boost)
