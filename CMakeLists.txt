@@ -7,8 +7,8 @@ if(NOT "${TASK}" STREQUAL "")
   set(TASK_FLAG "-D${TASK} ")
 endif()
 
-set(RELEASE_COMPILE_FLAGS "-O3 -Ofast -Wall")
-set(DEBUG_COMPILE_FLAGS "-g -Wall -Werr") 
+set(RELEASE_COMPILE_FLAGS "-O3 -Wall")
+set(DEBUG_COMPILE_FLAGS "-g -Wall -Werror") 
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)

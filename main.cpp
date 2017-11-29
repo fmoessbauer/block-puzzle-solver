@@ -20,7 +20,7 @@
 #include <blaze/Blaze.h>
 #include <boost/graph/adjacency_matrix.hpp>
 
-#include "LibNuMVC/tsewf.hpp"
+#include "LibNuMVC/numvc.hpp"
 
 // specify which problem should be solved 
 //#define PROBLEM_DEMO
@@ -359,10 +359,10 @@ int main(int argc, char** argv){
 
   // initialize solver and solve
   std::cout << "\n=== Start NuMVC solver ===" << std::endl;
-  TSEWF solver(os,
+  NuMVC solver(os,
       boost::num_vertices(col_graph)-num_bricks,
       std::chrono::seconds(100), true);
-  solver.cover_LS(TSEWF::default_stats_printer);
+  solver.cover_LS(NuMVC::default_stats_printer);
   auto solution = std::move(solver.get_independent_set());
   // print solution
   std::cout << "Proposed solution: ";
