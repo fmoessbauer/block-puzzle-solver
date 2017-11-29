@@ -10,12 +10,17 @@ endif()
 set(RELEASE_COMPILE_FLAGS "-O3 -Wall")
 set(DEBUG_COMPILE_FLAGS "-g -Wall -Werror") 
 
+find_package(OpenMP)
+if(OpenMP_found)
+  set(OMP_FLAG "${OpenMP_CXX_FLAGS}")
+endif()
+
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${TASK_FLAG} ${DEBUG_COMPILE_FLAGS}")
 else()
-  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${TASK_FLAG} ${RELEASE_COMPILE_FLAGS}")
+  set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${TASK_FLAG} ${RELEASE_COMPILE_FLAGS} ${OMP_FLAG}")
 endif()
 
 if("$ENV{BLAZE_DIR}" STREQUAL "")
