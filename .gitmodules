@@ -1,6 +1,3 @@
-[submodule "LibFastVC"]
-	path = LibFastVC
-	url = https://github.com/fmoessbauer/LibFastVC.git
-[submodule "LibNuMVC"]
-	path = LibNuMVC
-	url = https://github.com/fmoessbauer/LibNuMVC.git
+[submodule "LibMVC"]
+	path = LibMVC
+	url = https://github.com/fmoessbauer/LibMVC.git
