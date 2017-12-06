@@ -13,7 +13,7 @@ While this implementation currently only solves the provided puzzle as well as t
 
 ## Compiling
 
-This program depends on [LibNuMVC](https://github.com/fmoessbauer/LibMVC/LibNuMVC), [Blaze](https://bitbucket.org/blaze-lib/blaze) and the [Boost Graph Library](http://www.boost.org/doc/libs/1_65_1/libs/graph/doc/index.html). LibNuMVC is included as git submodule, so clone using `git clone --recursive`
+This program depends on [LibNuMVC](https://github.com/fmoessbauer/LibMVC/tree/master/LibNuMVC), [Blaze](https://bitbucket.org/blaze-lib/blaze) and the [Boost Graph Library](http://www.boost.org/doc/libs/1_65_1/libs/graph/doc/index.html). LibNuMVC is included as git submodule, so clone using `git clone --recursive`
 For compiling we recommend using cmake:
 
 ```bash
