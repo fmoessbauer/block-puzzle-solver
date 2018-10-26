@@ -20,7 +20,7 @@
 #include <blaze/Blaze.h>
 #include <boost/graph/adjacency_matrix.hpp>
 
-#include "LibMVC/LibNuMVC/numvc.hpp"
+#include "LibMVC/numvc.hpp"
 
 // specify which problem should be solved 
 //#define PROBLEM_DEMO
