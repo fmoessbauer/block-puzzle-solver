@@ -40,7 +40,7 @@ if( Boost_FOUND )
   add_library(Boost INTERFACE)
   # often not working if cmake or boost is too old
   #  target_link_libraries(Boost INTERFACE Boost::graph)
-  target_include_directories(Boost INTERFACE ${Boost_INCLUDE_DIR})
+  target_include_directories(Boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
   target_link_libraries(Boost PRIVATE ${Boost_LIBRARY_DIR})
 endif()
 
