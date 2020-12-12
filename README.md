@@ -13,7 +13,7 @@ While this implementation currently only solves the provided puzzle as well as t
 
 ## Compiling
 
-This program depends on [LibNuMVC](https://github.com/fmoessbauer/LibMVC/tree/master/LibNuMVC), [Blaze](https://bitbucket.org/blaze-lib/blaze) and the [Boost Graph Library](http://www.boost.org/doc/libs/1_65_1/libs/graph/doc/index.html). LibNuMVC is included as git submodule, so clone using `git clone --recursive`
+This program depends on [LibMVC](https://github.com/fmoessbauer/LibMVC/), [Blaze](https://bitbucket.org/blaze-lib/blaze) and the [Boost Graph Library](http://www.boost.org/doc/libs/1_65_1/libs/graph/doc/index.html). LibNuMVC is included as git submodule, so clone using `git clone --recursive`
 For compiling we recommend using cmake:
 
 ```bash
@@ -129,7 +129,7 @@ Hence, the white vertices are the independent set which denotes a collision free
 
 Although MVC is an [NP-Complete](https://en.wikipedia.org/wiki/NP-completeness) problem,
 there exist good heuristics which enable algorithms to solve it quite efficiently in most cases.
-Here we use the [LibNuMVC](https://github.com/fmoessbauer/LibNuMVC) solver, originally developed and published by [Shaowei Cai](http://lcs.ios.ac.cn/~caisw/).
+Here we use the [LibNuMVC](https://github.com/fmoessbauer/LibMVC) solver, originally developed and published by [Shaowei Cai](http://lcs.ios.ac.cn/~caisw/).
 
 ### Reconstruct Solution
 
